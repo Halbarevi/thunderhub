@@ -1,0 +1,291 @@
+import { FC } from 'react';
+import { InvoiceType } from '../../graphql/types';
+import { MessageCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { useGetChannelQuery } from '../../graphql/queries/__generated__/getChannel.generated';
+import { LoadingCard } from '../../components/loading/LoadingCard';
+import { Price } from '../../components/price/Price';
+import {
+  getDateDif,
+  getPastFutureStr,
+  getFormatDate,
+} from '../../components/generic/helpers';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { DetailTable, DetailRow } from './DetailTable';
+import { ComputedMarker } from './ComputedMarker';
+import {
+  getTradeMemoDisplay,
+  getTradeMemoText,
+  TradeDisplayMode,
+} from './tradeMemo';
+
+interface InvoiceCardProps {
+  invoice: InvoiceType;
+  tradeDisplayMode: TradeDisplayMode;
+  index: number;
+  setIndexOpen: (index: number) => void;
+  indexOpen: number;
+}
+
+const ChannelPeer: FC<{ id: string }> = ({ id }) => {
+  const { data, loading, error } = useGetChannelQuery({
+    variables: { id },
+  });
+
+  if (loading) return <LoadingCard noCard={true} />;
+  if (error) return <span className="text-muted-foreground">Unknown</span>;
+
+  const peer = data?.getChannel.partner_node_policies?.node?.node;
+  const alias = peer?.alias || 'Unknown';
+  const pubkey = peer?.public_key;
+
+  return (
+    <div className="flex flex-col items-end gap-0.5">
+      <span>{alias}</span>
+      {pubkey && (
+        <span className="font-mono text-[10px] text-muted-foreground break-all">
+          {pubkey}
+        </span>
+      )}
+    </div>
+  );
+};
+
+const StatusBadge = ({
+  confirmed,
+  canceled,
+}: {
+  confirmed: boolean;
+  canceled?: boolean | null;
+}) => {
+  if (confirmed) {
+    return (
+      <Badge
+        variant="secondary"
+        className="w-17.5 justify-center text-[10px] rounded-sm bg-green-500/10 text-green-600 dark:text-green-400"
+      >
+        Paid
+      </Badge>
+    );
+  }
+  if (canceled) {
+    return (
+      <Badge
+        variant="destructive"
+        className="w-17.5 justify-center text-[10px] rounded-sm"
+      >
+        Canceled
+      </Badge>
+    );
+  }
+  return (
+    <Badge
+      variant="secondary"
+      className="w-17.5 justify-center text-[10px] rounded-sm"
+    >
+      Pending
+    </Badge>
+  );
+};
+
+export const InvoiceCard = ({
+  invoice,
+  tradeDisplayMode,
+  index,
+  setIndexOpen,
+  indexOpen,
+}: InvoiceCardProps) => {
+  const {
+    chain_address,
+    confirmed_at,
+    created_at,
+    description,
+    description_hash,
+    expires_at,
+    id,
+    is_canceled,
+    is_confirmed,
+    is_held,
+    is_private,
+    request,
+    secret,
+    tokens,
+    date,
+    payments,
+  } = invoice;
+
+  const descriptionDisplay = getTradeMemoDisplay(description);
+  const displayDescription =
+    getTradeMemoText(description, tradeDisplayMode) || 'Invoice';
+  const texts = payments
+    .map(p => getTradeMemoText(p?.messages?.message, tradeDisplayMode))
+    .filter(Boolean);
+  const hasMessages = !!texts.length;
+  const isOpen = index === indexOpen;
+
+  const handleClick = () => {
+    setIndexOpen(isOpen ? 0 : index);
+  };
+
+  return (
+    <div className="rounded border border-border bg-card/50 hover:bg-card transition-colors">
+      <button
+        onClick={handleClick}
+        className="w-full text-left px-3 py-2.5 cursor-pointer"
+      >
+        <div className="flex items-center gap-3">
+          <div className="shrink-0">
+            <StatusBadge confirmed={is_confirmed} canceled={is_canceled} />
+          </div>
+          <div className="hidden sm:flex flex-1 min-w-0 items-center gap-2">
+            <span className="font-medium text-sm truncate">
+              {displayDescription}
+            </span>
+            {tradeDisplayMode === 'computed' &&
+              descriptionDisplay?.isTradeMemo && <ComputedMarker />}
+            {hasMessages && (
+              <MessageCircle size={14} className="text-primary shrink-0" />
+            )}
+          </div>
+          <span className="hidden sm:block text-xs text-muted-foreground shrink-0">
+            {getDateDif(date)} ago
+          </span>
+          <span className="font-mono text-sm font-medium shrink-0 ml-auto sm:ml-0">
+            <Price amount={tokens} />
+          </span>
+          {isOpen ? (
+            <ChevronUp size={14} className="text-muted-foreground shrink-0" />
+          ) : (
+            <ChevronDown size={14} className="text-muted-foreground shrink-0" />
+          )}
+        </div>
+        <div className="flex sm:hidden items-center gap-2 mt-1.5">
+          <span className="text-xs truncate text-muted-foreground">
+            {displayDescription}
+          </span>
+          {tradeDisplayMode === 'computed' &&
+            descriptionDisplay?.isTradeMemo && <ComputedMarker />}
+          {hasMessages && (
+            <MessageCircle size={12} className="text-primary shrink-0" />
+          )}
+          <span className="text-[11px] text-muted-foreground shrink-0 ml-auto">
+            {getDateDif(date)} ago
+          </span>
+        </div>
+      </button>
+      {isOpen && (
+        <div className="px-3 pb-3">
+          <Separator className="mb-3" />
+          <DetailTable>
+            {descriptionDisplay?.isTradeMemo && (
+              <DetailRow label="Parsed Description">
+                <div className="inline-flex items-start gap-1">
+                  <span>{descriptionDisplay.computed}</span>
+                  <ComputedMarker />
+                </div>
+              </DetailRow>
+            )}
+            {descriptionDisplay && (
+              <DetailRow label="Description">
+                {descriptionDisplay.raw}
+              </DetailRow>
+            )}
+            {is_confirmed && confirmed_at && (
+              <DetailRow label="Confirmed">
+                {`${getDateDif(confirmed_at)} ago (${getFormatDate(confirmed_at)})`}
+              </DetailRow>
+            )}
+            <DetailRow label="Created">
+              {`${getDateDif(created_at)} ago (${getFormatDate(created_at)})`}
+            </DetailRow>
+            <DetailRow label="Expires">
+              {`${getDateDif(expires_at)} ${getPastFutureStr(expires_at)} (${getFormatDate(expires_at)})`}
+            </DetailRow>
+            <DetailRow label="ID">{id}</DetailRow>
+            {chain_address && (
+              <DetailRow label="Chain Address">{chain_address}</DetailRow>
+            )}
+            {description_hash && (
+              <DetailRow label="Description Hash">{description_hash}</DetailRow>
+            )}
+            <DetailRow label="Canceled">{is_canceled ? 'Yes' : 'No'}</DetailRow>
+            <DetailRow label="Held">{is_held ? 'Yes' : 'No'}</DetailRow>
+            <DetailRow label="Private">{is_private ? 'Yes' : 'No'}</DetailRow>
+            {secret && <DetailRow label="Secret">{secret}</DetailRow>}
+            {request && <DetailRow label="Request">{request}</DetailRow>}
+          </DetailTable>
+          {payments.length > 0 && (
+            <div className="mt-3 space-y-2">
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                HTLCs
+              </div>
+              {payments.map((p, idx) => {
+                const message = getTradeMemoText(
+                  p.messages?.message,
+                  tradeDisplayMode
+                );
+                const messageDisplay = getTradeMemoDisplay(p.messages?.message);
+                return (
+                  <div key={idx} className="rounded bg-muted/50 p-2">
+                    <DetailTable>
+                      <DetailRow label="State">
+                        <StatusBadge
+                          confirmed={p.is_confirmed}
+                          canceled={p.is_canceled}
+                        />
+                      </DetailRow>
+                      {p.pending_index != null && (
+                        <DetailRow label="HTLC Index">
+                          {p.pending_index}
+                        </DetailRow>
+                      )}
+                      <DetailRow label="Amount">
+                        <Price amount={p.tokens} />
+                      </DetailRow>
+                      <DetailRow label="Amount (msat)">{p.mtokens}</DetailRow>
+                      {p.total_mtokens && (
+                        <DetailRow label="MPP Total (msat)">
+                          {p.total_mtokens}
+                        </DetailRow>
+                      )}
+                      <DetailRow label="Channel">{p.in_channel}</DetailRow>
+                      <DetailRow label="Peer">
+                        <ChannelPeer id={p.in_channel} />
+                      </DetailRow>
+                      <DetailRow label="Accepted">
+                        {`${getDateDif(p.created_at)} ago (${getFormatDate(p.created_at)})`}
+                      </DetailRow>
+                      <DetailRow label="Accept Height">
+                        {p.created_height}
+                      </DetailRow>
+                      {p.is_confirmed && p.confirmed_at && (
+                        <DetailRow label="Resolved">
+                          {`${getDateDif(p.confirmed_at)} ago (${getFormatDate(p.confirmed_at)})`}
+                        </DetailRow>
+                      )}
+                      <DetailRow label="Expiry Height">{p.timeout}</DetailRow>
+                      {p.is_held && <DetailRow label="Held">Yes</DetailRow>}
+                      {messageDisplay?.isTradeMemo && (
+                        <DetailRow label="Parsed Message">
+                          <div className="inline-flex items-start gap-1">
+                            <span>{messageDisplay.computed}</span>
+                            <ComputedMarker />
+                          </div>
+                        </DetailRow>
+                      )}
+                      {message && (
+                        <DetailRow label="Message">
+                          {messageDisplay?.raw ?? message}
+                        </DetailRow>
+                      )}
+                    </DetailTable>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};

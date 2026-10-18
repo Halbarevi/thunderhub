@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1775074036636,
+      "tag": "0000_premium_pixie",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1775160646270,
+      "tag": "0001_fixed_nightshade",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1776104481313,
+      "tag": "0002_add_encrypted_amboss_jwt",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1777519591063,
+      "tag": "0003_orange_captain_universe",
+      "breakpoints": true
+    }
+  ]
+}

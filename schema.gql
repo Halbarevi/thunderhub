@@ -1,0 +1,1413 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AccessIds {
+  ids: [String!]!
+}
+
+input AddNodeInput {
+  litd: LitdInput
+  lnd: LndInput
+  name: String!
+}
+
+type AddNodeResult {
+  id: String!
+  name: String!
+  slug: String!
+}
+
+type AggregatedChannelForwards {
+  channel: String
+  channel_info: ChannelInfo
+  id: String!
+  incoming: AggregatedSideStats!
+  outgoing: AggregatedSideStats!
+}
+
+type AggregatedChannelSideForwards {
+  channel: String
+  channel_info: ChannelInfo
+  count: Float!
+  fee: Float!
+  fee_mtokens: String!
+  id: String!
+  mtokens: String!
+  tokens: Float!
+}
+
+type AggregatedRouteForwards {
+  count: Float!
+  fee: Float!
+  fee_mtokens: String!
+  id: String!
+  incoming_channel: String!
+  incoming_channel_info: ChannelInfo
+  mtokens: String!
+  outgoing_channel: String!
+  outgoing_channel_info: ChannelInfo
+  route: String!
+  tokens: Float!
+}
+
+type AggregatedSideStats {
+  count: Float!
+  fee: Float!
+  fee_mtokens: String!
+  id: String!
+  mtokens: String!
+  tokens: Float!
+}
+
+type AmbossSubscription {
+  end_date: String!
+  subscribed: Boolean!
+  upgradable: Boolean!
+}
+
+type AmbossUser {
+  backups: UserBackupInfo!
+  subscription: AmbossSubscription!
+}
+
+type AssetChannelSummary {
+  has_active_channel: Boolean!
+  open_count: Int!
+  pending_count: Int!
+  total_local_atomic: String!
+  total_remote_atomic: String!
+}
+
+type AuthResponse {
+  message: String!
+  status: String!
+}
+
+input BakeSuperMacaroonInput {
+  read_only: Boolean! = false
+
+  """LITD REST endpoint (e.g. https://host:8443)"""
+  rest_host: String!
+}
+
+type Balances {
+  lightning: LightningBalance!
+  onchain: OnChainBalance!
+}
+
+type BaseNodeInfo {
+  alias: String!
+  public_key: String!
+}
+
+type BitcoinFee {
+  fast: Float!
+  halfHour: Float!
+  hour: Float!
+  minimum: Float!
+}
+
+type BoltzInfoType {
+  feePercent: Float!
+  max: Float!
+  min: Float!
+}
+
+input CancelMagmaOrderInput {
+  cancellationReason: OrderCancellationReason!
+  orderId: String!
+}
+
+type CancelMagmaOrderResult {
+  success: Boolean!
+}
+
+type ChainAddressSend {
+  confirmationCount: Float!
+  id: String!
+  isConfirmed: Boolean!
+  isOutgoing: Boolean!
+  tokens: Float
+}
+
+type ChainTransaction {
+  block_id: String
+  confirmation_count: Float
+  confirmation_height: Float
+  created_at: String!
+  description: String
+  fee: Float
+  id: String!
+  is_confirmed: Boolean!
+  is_outgoing: Boolean!
+  output_addresses: [String!]!
+  tokens: Float!
+  transaction: String
+}
+
+type Channel {
+  asset: ChannelAsset
+  capacity: Float!
+  channel_age: Float!
+  commit_transaction_fee: Float!
+  commit_transaction_weight: Float!
+  id: String!
+  is_active: Boolean!
+  is_closing: Boolean!
+  is_opening: Boolean!
+  is_partner_initiated: Boolean!
+  is_private: Boolean!
+  local_balance: Float!
+  local_reserve: Float!
+  note: String
+  partner_fee_info: SingleChannel
+  partner_node_info: Node!
+  partner_public_key: String!
+  past_states: Float!
+  pending_payments: [PendingPayment!]!
+  pending_resume: PendingResume!
+  received: Float!
+  remote_balance: Float!
+  remote_reserve: Float!
+  sent: Float!
+  time_offline: Float
+  time_online: Float
+  transaction_id: String!
+  transaction_vout: Float!
+  unsettled_balance: Float!
+}
+
+type ChannelAsset {
+  asset_id: String!
+  asset_name: String!
+  asset_precision: Float!
+  asset_type: String!
+  capacity: String!
+  group_key: String
+  local_balance: String!
+  remote_balance: String!
+}
+
+type ChannelInfo {
+  node1_info: BaseNodeInfo!
+  node2_info: BaseNodeInfo!
+}
+
+type ChannelMetadata {
+  channel_id: String!
+  note: String!
+  updated_at: String!
+}
+
+type ChannelReport {
+  commit: Float!
+  incomingPendingHtlc: Float!
+  local: Float!
+  maxIn: Float!
+  maxOut: Float!
+  outgoingPendingHtlc: Float!
+  remote: Float!
+  totalPendingHtlc: Float!
+}
+
+type ChannelRequest {
+  callback: String
+  k1: String
+  tag: String
+  uri: String
+}
+
+type ChannelSummary {
+  has_active_channel: Boolean!
+  open_count: Int!
+  pending_count: Int!
+  total_local_sats: String!
+  total_remote_sats: String!
+}
+
+type ChannelsMutations {
+  delete_note(channelId: String!): Boolean!
+  upsert_note(channelId: String!, note: String!): ChannelMetadata!
+}
+
+type ClosedChannel {
+  capacity: Float!
+  channel_age: Float
+  close_confirm_height: Float
+  close_transaction_id: String
+  closed_for_blocks: Float
+  final_local_balance: Float!
+  final_time_locked_balance: Float!
+  id: String
+  is_breach_close: Boolean!
+  is_cooperative_close: Boolean!
+  is_funding_cancel: Boolean!
+  is_local_force_close: Boolean!
+  is_remote_force_close: Boolean!
+  partner_node_info: Node!
+  partner_public_key: String!
+  transaction_id: String!
+  transaction_vout: Float!
+}
+
+enum ConfigFields {
+  BACKUPS
+  CHANNELS_PUSH
+  HEALTHCHECKS
+  ONCHAIN_PUSH
+  PRIVATE_CHANNELS_PUSH
+}
+
+type ConfigState {
+  backup_state: Boolean!
+  channels_push_enabled: Boolean!
+  healthcheck_ping_state: Boolean!
+  onchain_push_enabled: Boolean!
+  private_channels_push_enabled: Boolean!
+}
+
+type CreateBoltzReverseSwapType {
+  decodedInvoice: DecodeInvoice
+  id: String!
+  invoice: String!
+  lockupAddress: String!
+  minerFeeInvoice: String
+  onchainAmount: Float!
+  preimage: String
+  preimageHash: String
+  privateKey: String
+  publicKey: String
+  receivingAddress: String!
+  redeemScript: String!
+  timeoutBlockHeight: Float!
+}
+
+type CreateInitialUserResult {
+  email: String!
+  id: String!
+  role: String!
+}
+
+type CreateInvoice {
+  chain_address: String
+  created_at: String!
+  description: String!
+  id: String!
+  mtokens: String
+  request: String!
+  secret: String!
+  tokens: Float
+}
+
+type CreateMacaroon {
+  base: String!
+  hex: String!
+}
+
+type CurrentNode {
+  capabilities: NodeCapabilities!
+  created_at: String
+  id: String!
+  network: String
+  socket: String!
+}
+
+type DecodeInvoice {
+  chain_address: String
+  cltv_delta: Float
+  description: String!
+  description_hash: String
+  destination: String!
+  destination_node: Node
+  expires_at: String!
+  id: String!
+  mtokens: String!
+  payment: String
+  routes: [[Route!]!]!
+  safe_tokens: Float!
+  tokens: Float!
+}
+
+type DeleteNodeResult {
+  success: Boolean!
+}
+
+input EditNodeInput {
+  name: String
+  slug: String!
+}
+
+type EditNodeResult {
+  id: String!
+  name: String!
+  slug: String!
+}
+
+input ExecuteTradeInput {
+  asset_amount: String!
+  asset_precision: Float
+  asset_symbol: String
+  expiry_epoch: String
+  payment_request: String
+  peer_pubkey: String!
+  rfq_id: String
+  sats_amount: String!
+  tapd_asset_id: String
+  tapd_group_key: String
+  transaction_type: TapTransactionType!
+}
+
+type ExecuteTradeResult {
+  fee_sats: String
+  payment_preimage: String
+  sats_amount: String
+  success: Boolean!
+}
+
+type Forward {
+  created_at: String!
+  fee: Float!
+  fee_mtokens: String!
+  id: String!
+  incoming_channel: String!
+  mtokens: String!
+  outgoing_channel: String!
+  tokens: Float!
+}
+
+type GetForwards {
+  by_channel: [AggregatedChannelForwards!]!
+  by_incoming: [AggregatedChannelSideForwards!]!
+  by_outgoing: [AggregatedChannelSideForwards!]!
+  by_route: [AggregatedRouteForwards!]!
+  list: [Forward!]!
+}
+
+type GetInvoicesType {
+  invoices: [InvoiceType!]!
+  next: String
+}
+
+type GetPaymentsType {
+  next: String
+  payments: [PaymentType!]!
+}
+
+input GetTapOffersInput {
+  ambossAssetId: String
+  limit: Int
+  minAmount: String
+  offset: Int
+  sortBy: TapOfferSortBy
+  sortDir: TapOfferSortDir
+  transactionType: TapTransactionType!
+}
+
+type GetTradeInvoicesResult {
+  invoices: [TradeInvoice!]!
+  next: String
+}
+
+type Hops {
+  channel: String!
+  channel_capacity: Float!
+  fee_mtokens: String!
+  forward_mtokens: String!
+  timeout: Float!
+}
+
+type InvoicePayment {
+  canceled_at: String
+  confirmed_at: String
+  created_at: String!
+  created_height: Float!
+  in_channel: String!
+  is_canceled: Boolean!
+  is_confirmed: Boolean!
+  is_held: Boolean!
+  messages: MessageType
+  mtokens: String!
+  pending_index: Float
+  timeout: Float!
+  tokens: Float!
+  total_mtokens: String
+}
+
+type InvoiceType {
+  chain_address: String
+  confirmed_at: String
+  created_at: String!
+  date: String!
+  description: String!
+  description_hash: String
+  expires_at: String!
+  id: String!
+  is_canceled: Boolean
+  is_confirmed: Boolean!
+  is_held: Boolean
+  is_private: Boolean!
+  is_push: Boolean
+  payments: [InvoicePayment!]!
+  received: Float!
+  received_mtokens: String!
+  request: String
+  secret: String!
+  tokens: String!
+  type: String!
+}
+
+type LightningBalance {
+  active: String!
+  commit: String!
+  confirmed: String!
+  pending: String!
+}
+
+type LightningNodeSocialInfo {
+  socials: NodeSocial
+}
+
+type LightningQueries {
+  get_access_ids: AccessIds!
+  id: String!
+}
+
+input LitdInput {
+  cert: String
+  macaroon: String!
+  socket: String!
+}
+
+union LnUrlRequest = ChannelRequest | PayRequest | WithdrawRequest
+
+input LndInput {
+  cert: String
+  macaroon: String!
+  socket: String!
+}
+
+type MagmaMutations {
+  cancel_order(input: CancelMagmaOrderInput!): CancelMagmaOrderResult!
+}
+
+type MagmaOrder {
+  amount: MagmaOrderAmount!
+  channelId: String
+  createdAt: String!
+  destination: MagmaOrderParty!
+  fees: MagmaOrderFees!
+  id: String!
+  paymentStatus: String
+  source: MagmaOrderParty!
+  status: String!
+  timeout: String
+}
+
+type MagmaOrderAmount {
+  sats: String
+}
+
+type MagmaOrderFeeAmount {
+  sats: Int
+}
+
+type MagmaOrderFees {
+  buyer: MagmaOrderFeeAmount
+  seller: MagmaOrderFeeAmount
+}
+
+type MagmaOrderInvoice {
+  invoice: String
+}
+
+type MagmaOrderParty {
+  alias: String
+  pubkey: String
+}
+
+type MagmaOrderQueries {
+  find_many: MagmaPendingOrders
+  get_invoice(orderId: String!): MagmaOrderInvoice
+}
+
+type MagmaPendingOrders {
+  magmaUrl: String!
+  purchases: [MagmaOrder!]!
+  sales: [MagmaOrder!]!
+}
+
+type MagmaQueries {
+  get_tap_offers(input: GetTapOffersInput!): TapTradeOfferList!
+  id: String!
+  orders: MagmaOrderQueries!
+}
+
+type MessageType {
+  message: String
+}
+
+type Mutation {
+  addPeer(isTemporary: Boolean, publicKey: String, socket: String, url: String): Boolean!
+  bakeSuperMacaroon(input: BakeSuperMacaroonInput!): SuperMacaroon!
+  claimBoltzTransaction(destination: String!, fee: Float!, id: String!, lockupAddress: String!, preimage: String!, privateKey: String!, redeem: String!): String!
+  closeChannel(forceClose: Boolean, id: String!, targetConfirmations: Float, tokensPerVByte: Float): OpenOrCloseChannel!
+  createAddress(type: String! = "p2tr"): String!
+  createBoltzReverseSwap(address: String, amount: Float!): CreateBoltzReverseSwapType!
+  createInvoice(amount: Float!, description: String, includePrivate: Boolean, secondsUntil: Float): CreateInvoice!
+  createMacaroon(permissions: NetworkInfoInput!): CreateMacaroon!
+  executeTrade(input: ExecuteTradeInput!): ExecuteTradeResult!
+  fetchLnUrl(url: String!): LnUrlRequest!
+  keysend(destination: String, message: String, tokens: Float!): PayInvoice!
+  lnUrlAuth(url: String!): AuthResponse!
+  lnUrlChannel(callback: String!, k1: String!, uri: String!): String!
+  lnUrlPay(amount: Float!, callback: String!, comment: String): PaySuccess!
+  lnUrlWithdraw(amount: Float!, callback: String!, description: String, k1: String!): String!
+  loginAmboss: Boolean!
+  logout: Boolean!
+  magma: MagmaMutations!
+  openChannel(input: OpenChannelParams!): OpenOrCloseChannel!
+  pay(max_fee: Float!, max_paths: Float!, out: [String!], request: String!): Boolean!
+  public: PublicMutation!
+  purchaseLiquidity(amount_cents: String!): Boolean!
+  pushBackup: Boolean!
+  removePeer(publicKey: String): Boolean!
+  removeTwofaSecret(token: String!): Boolean!
+  sendToAddress(address: String!, fee: Float, sendAll: Boolean, target: Float, tokens: Float): ChainAddressSend!
+  setupTradeCapacity(input: SetupTradeCapacityInput!): SetupTradeCapacityResult!
+  taproot_assets: TaprootAssetsMutations!
+  team: TeamMutations!
+  toggleConfig(field: ConfigFields!): Boolean!
+  updateFees(base_fee_tokens: Float, cltv_delta: Float, fee_rate: Float, max_htlc_mtokens: String, min_htlc_mtokens: String, transaction_id: String, transaction_vout: Float): Boolean!
+  updateMultipleFees(channels: [UpdateRoutingFeesParams!]!): Boolean!
+  updateTwofaSecret(secret: String!, token: String!): Boolean!
+  user: UserMutations!
+}
+
+type NetworkInfo {
+  averageChannelSize: Float!
+  channelCount: Float!
+  maxChannelSize: Float!
+  medianChannelSize: Float!
+  minChannelSize: Float!
+  nodeCount: Float!
+  notRecentlyUpdatedPolicyCount: Float!
+  totalCapacity: Float!
+}
+
+input NetworkInfoInput {
+  is_ok_to_adjust_peers: Boolean!
+  is_ok_to_create_chain_addresses: Boolean!
+  is_ok_to_create_invoices: Boolean!
+  is_ok_to_create_macaroons: Boolean!
+  is_ok_to_derive_keys: Boolean!
+  is_ok_to_get_access_ids: Boolean!
+  is_ok_to_get_chain_transactions: Boolean!
+  is_ok_to_get_invoices: Boolean!
+  is_ok_to_get_payments: Boolean!
+  is_ok_to_get_peers: Boolean!
+  is_ok_to_get_wallet_info: Boolean!
+  is_ok_to_pay: Boolean!
+  is_ok_to_revoke_access_ids: Boolean!
+  is_ok_to_send_to_chain_addresses: Boolean!
+  is_ok_to_sign_bytes: Boolean!
+  is_ok_to_sign_messages: Boolean!
+  is_ok_to_stop_daemon: Boolean!
+  is_ok_to_verify_bytes_signatures: Boolean!
+  is_ok_to_verify_messages: Boolean!
+}
+
+type Node {
+  node: NodeType
+}
+
+type NodeCapabilities {
+  list: [String!]!
+}
+
+type NodeInfo {
+  active_channels_count: Float!
+  alias: String!
+  chains: [String!]!
+  closed_channels_count: Float!
+  color: String!
+  current_block_hash: String!
+  current_block_height: Float!
+  is_synced_to_chain: Boolean!
+  is_synced_to_graph: Boolean!
+  latest_block_at: String!
+  latest_block_height: Float
+  peers_count: Float!
+  pending_channels_count: Float!
+  public_key: String!
+  uris: [String!]!
+  version: String!
+}
+
+type NodePolicy {
+  base_fee_mtokens: String
+  cltv_delta: Float
+  fee_rate: Float
+  is_disabled: Boolean
+  max_htlc_mtokens: String
+  min_htlc_mtokens: String
+  node: Node
+  updated_at: String
+}
+
+type NodeSocial {
+  info: NodeSocialInfo
+}
+
+type NodeSocialInfo {
+  email: String
+  private: Boolean
+  telegram: String
+  twitter: String
+  twitter_verified: Boolean
+  website: String
+}
+
+type NodeType {
+  alias: String!
+  public_key: String!
+}
+
+type OffchainMutations {
+  channels: ChannelsMutations!
+}
+
+input OfferReadinessInput {
+  peer_pubkey: String!
+  tapd_asset_id: String
+  tapd_group_key: String
+}
+
+type OfferReadinessResult {
+  asset_channels: AssetChannelSummary!
+  btc_channels: ChannelSummary!
+  has_pending_order: Boolean!
+  is_peer_connected: Boolean!
+  onchain_asset_balance: String!
+  onchain_balance_sats: String!
+  pending_order_id: String
+  pending_order_status: String
+}
+
+type OnChainBalance {
+  closing: String!
+  confirmed: String!
+  pending: String!
+}
+
+input OpenChannelParams {
+  base_fee_mtokens: String
+  chain_fee_tokens_per_vbyte: Float
+  channel_size: Float
+  fee_rate: Float
+  give_tokens: Float = 0
+  is_max_funding: Boolean
+  is_private: Boolean
+  is_recommended: Boolean
+  partner_public_key: String
+}
+
+type OpenOrCloseChannel {
+  transactionId: String!
+  transactionOutputIndex: String!
+}
+
+enum OrderCancellationReason {
+  CHANNEL_SIZE_OUT_OF_BOUNDS
+  UNABLE_TO_CONNECT_TO_NODE
+  UNABLE_TO_PAY
+}
+
+type PayInvoice {
+  fee: Float!
+  fee_mtokens: String!
+  hops: [Hops!]!
+  id: String!
+  is_confirmed: Boolean!
+  is_outgoing: Boolean!
+  mtokens: String!
+  safe_fee: Float!
+  safe_tokens: Float!
+  secret: String!
+  tokens: Float!
+}
+
+type PayRequest {
+  callback: String
+  commentAllowed: Float
+  maxSendable: String
+  metadata: String
+  minSendable: String
+  tag: String
+}
+
+type PaySuccess {
+  ciphertext: String
+  description: String
+  iv: String
+  message: String
+  tag: String
+  url: String
+}
+
+type PaymentType {
+  created_at: String!
+  date: String!
+  destination: String!
+  destination_node: Node!
+  fee: Float!
+  fee_mtokens: String!
+  hops: [Node!]!
+  id: String!
+  index: Float
+  is_confirmed: Boolean!
+  is_outgoing: Boolean!
+  mtokens: String!
+  request: String
+  safe_fee: Float!
+  safe_tokens: Float
+  secret: String!
+  tokens: String!
+  type: String!
+}
+
+type Peer {
+  bytes_received: Float!
+  bytes_sent: Float!
+  is_inbound: Boolean!
+  is_sync_peer: Boolean
+  partner_node_info: Node!
+  ping_time: Float!
+  public_key: String!
+  socket: String!
+  tokens_received: Float!
+  tokens_sent: Float!
+}
+
+type PendingChannel {
+  asset: ChannelAsset
+  close_transaction_id: String
+  is_active: Boolean!
+  is_closing: Boolean!
+  is_opening: Boolean!
+  is_timelocked: Boolean!
+  local_balance: Float!
+  local_reserve: Float!
+  partner_node_info: Node!
+  partner_public_key: String!
+  received: Float!
+  remote_balance: Float!
+  remote_reserve: Float!
+  sent: Float!
+  timelock_blocks: Float
+  timelock_expiration: Float
+  transaction_fee: Float
+  transaction_id: String!
+  transaction_vout: Float!
+}
+
+type PendingPayment {
+  id: String!
+  is_outgoing: Boolean!
+  timeout: Float!
+  tokens: Float!
+}
+
+type PendingResume {
+  incoming_amount: Float!
+  incoming_tokens: Float!
+  outgoing_amount: Float!
+  outgoing_tokens: Float!
+  total_amount: Float!
+  total_tokens: Float!
+}
+
+type Policy {
+  base_fee_mtokens: String
+  cltv_delta: Float
+  fee_rate: Float
+  is_disabled: Boolean
+  max_htlc_mtokens: String
+  min_htlc_mtokens: String
+  public_key: String!
+  updated_at: String
+}
+
+type PublicMutation {
+  create_initial_user(email: String!, password: String!): CreateInitialUserResult!
+  get_auth_token(cookie: String): Boolean!
+  get_db_session_token(email: String!, password: String!): Boolean!
+  get_session_token(id: String!, password: String!, token: String): String!
+}
+
+type PublicQueries {
+  get_server_accounts: [ServerAccount!]!
+  get_session_info: SessionInfo!
+  id: String!
+}
+
+type Query {
+  getAccount: ServerAccount!
+  getAmbossLoginToken(redirect_url: String): String!
+  getAmbossUser: AmbossUser
+  getBackups: String!
+  getBitcoinFees: BitcoinFee!
+  getBitcoinPrice: String!
+  getBoltzInfo: BoltzInfoType!
+  getChainTransactions: [ChainTransaction!]!
+  getChannel(id: String!): SingleChannel!
+  getChannelReport: ChannelReport!
+  getChannels(active: Boolean, partner_public_key: String): [Channel!]!
+  getClosedChannels: [ClosedChannel!]!
+  getConfigState: ConfigState!
+  getForwards(days: Float!): GetForwards!
+  getHello: String!
+  getInvoice(id: String!): InvoiceType!
+  getInvoiceStatusChange(id: String!): String!
+  getInvoices(token: String): GetInvoicesType!
+  getLatestVersion: String!
+  getLightningAddressInfo(address: String!): PayRequest!
+  getLiquidityPerUsd: String!
+  getNetworkInfo: NetworkInfo!
+  getNode(publicKey: String!, withoutChannels: Boolean): Node!
+  getNodeBalances: Balances!
+  getNodeInfo: NodeInfo!
+  getNodeSocialInfo(pubkey: String!): LightningNodeSocialInfo!
+  getPayment(id: String!): PaymentType!
+  getPayments(token: String): GetPaymentsType!
+  getPeers: [Peer!]!
+  getPendingChannels: [PendingChannel!]!
+  getTradeQuote(input: TradeQuoteInput!): TradeQuoteResult!
+  getTwofaSecret: TwofaResult!
+  getUtxos: [Utxo!]!
+  getWalletInfo: Wallet!
+  lightning: LightningQueries!
+  magma: MagmaQueries!
+  node: CurrentNode!
+  public: PublicQueries!
+  rails: RailsQueries!
+  recoverFunds(backup: String!): Boolean!
+  signMessage(message: String!): String!
+  taproot_assets: TaprootAssetsQueries!
+  trade: TradeQueries!
+  user: UserQueries!
+  verifyBackup(backup: String!): Boolean!
+  verifyBackups(backup: String!): Boolean!
+  verifyMessage(message: String!, signature: String!): String!
+}
+
+type RailsQueries {
+  get_tap_supported_assets: TapSupportedAssetList!
+  id: String!
+  offer_readiness(input: OfferReadinessInput!): OfferReadinessResult!
+  trade_readiness: TradeReadinessResult!
+}
+
+type RecommendedNode {
+  pubkey: String!
+  sockets: [String!]!
+}
+
+type Route {
+  base_fee_mtokens: String
+  channel: String
+  cltv_delta: Float
+  fee_rate: Float
+  public_key: String!
+}
+
+type ServerAccount {
+  hasNode: Boolean
+  id: String!
+  name: String!
+  slug: String!
+  twofaEnabled: Boolean!
+  type: String!
+}
+
+type SessionInfo {
+  loggedIn: Boolean!
+  name: String
+  slug: String
+  type: String
+}
+
+input SetupTradeCapacityInput {
+  ambossAssetId: String!
+  assetAmount: String!
+  assetRate: String!
+  feeRateSatPerVbyte: Int
+  magmaOfferId: String!
+  openOutboundAssetChannel: Boolean
+  satsAmount: String
+  swapNodePubkey: String!
+  swapNodeSockets: [String!]
+  tapdAssetId: String
+  tapdGroupKey: String
+  transactionType: TapTransactionType!
+}
+
+type SetupTradeCapacityResult {
+  channelOpenPending: Boolean
+  magmaOrderAmountAsset: String
+  magmaOrderAmountSats: String
+  magmaOrderFeeSats: String
+  magmaOrderId: String
+  magmaOrderStatus: String
+  outboundChannelOutputIndex: Int
+  outboundChannelTxid: String
+  skippedMagmaOrder: Boolean
+  skippedOutboundChannel: Boolean
+  success: Boolean!
+}
+
+type SingleChannel {
+  capacity: Float!
+  id: String!
+  node_policies: NodePolicy
+  partner_node_policies: NodePolicy
+  policies: [Policy!]!
+  transaction_id: String!
+  transaction_vout: Float!
+  updated_at: String
+}
+
+type SuperMacaroon {
+  base: String!
+  hex: String!
+}
+
+type TapAddress {
+  amount: String!
+  asset_id: String!
+  asset_type: String!
+  encoded: String!
+  group_key: String
+  internal_key: String!
+  script_key: String!
+  taproot_output_key: String!
+}
+
+type TapAsset {
+  amount: String!
+  asset_genesis: TapAssetGenesis
+  is_burn: Boolean!
+  is_spent: Boolean!
+  lock_time: Int!
+  relative_lock_time: Int!
+  script_key: String!
+  script_version: Int!
+}
+
+type TapAssetBalanceEntry {
+  asset_id: String
+  balance: String!
+  group_key: String
+  names: [String!]
+  precision: Int!
+}
+
+type TapAssetChannelBalance {
+  asset_id: String!
+  asset_name: String
+  asset_precision: Float!
+  capacity: String!
+  channel_point: String!
+  group_key: String
+  local_balance: String!
+  partner_public_key: String!
+  remote_balance: String!
+}
+
+type TapAssetGenesis {
+  asset_id: String!
+  asset_type: TapAssetType!
+  genesis_point: String!
+  meta_hash: String!
+  name: String!
+  output_index: Int!
+}
+
+input TapAssetInvoiceInput {
+  asset_amount: String!
+  asset_id: String
+  expiry: Int
+  group_key: String
+  memo: String
+  peer_pubkey: String
+}
+
+type TapAssetInvoiceResponse {
+  add_index: String!
+  asset_amount: String!
+  asset_id: String
+  group_key: String
+  payment_addr: String!
+  payment_request: String!
+  r_hash: String!
+}
+
+type TapAssetList {
+  assets: [TapAsset!]!
+}
+
+type TapAssetPrice {
+  id: String
+  usd: Float
+}
+
+enum TapAssetType {
+  COLLECTIBLE
+  NORMAL
+}
+
+enum TapBalanceGroupBy {
+  ASSET_ID
+  GROUP_KEY
+}
+
+type TapBalances {
+  balances: [TapAssetBalanceEntry!]!
+}
+
+type TapDaemonInfo {
+  block_hash: String!
+  block_height: Int!
+  lnd_identity_pubkey: String!
+  lnd_version: String!
+  network: String!
+  node_alias: String!
+  sync_to_chain: Boolean!
+  version: String!
+}
+
+type TapFederationServer {
+  host: String!
+  id: Int!
+}
+
+type TapFederationServerList {
+  node_address: String
+  servers: [TapFederationServer!]!
+}
+
+type TapFinalizeBatchResponse {
+  batch_key: String!
+}
+
+input TapFundChannelInput {
+  asset_amount: String!
+  asset_id: String
+  fee_rate_sat_per_vbyte: Int
+  group_key: String
+  peer_pubkey: String!
+  push_sat: Int
+  universe_host: String
+}
+
+type TapFundChannelResponse {
+  output_index: Int!
+  txid: String!
+}
+
+input TapMintAssetInput {
+  amount: String!
+  asset_type: TapAssetType! = NORMAL
+  group_key: String
+  grouped: Boolean! = true
+  name: String!
+  precision: Int!
+}
+
+type TapMintResponse {
+  batch_key: String!
+}
+
+enum TapOfferSortBy {
+  AVAILABLE
+  RATE
+}
+
+enum TapOfferSortDir {
+  ASC
+  DESC
+}
+
+type TapSupportedAsset {
+  assetId: String
+  description: String
+  groupKey: String
+  id: String!
+  precision: Int!
+  prices: TapAssetPrice
+  symbol: String!
+  universeHost: String
+}
+
+type TapSupportedAssetList {
+  list: [TapSupportedAsset!]!
+  totalCount: Float!
+}
+
+type TapSyncResult {
+  synced_universes: [String!]!
+}
+
+type TapTradeOffer {
+  asset: TapTradeOfferAsset!
+  available: TapTradeOfferAmount!
+  fees: TapTradeOfferFees!
+  id: String!
+  magmaOfferId: String!
+  maxOrder: TapTradeOfferAmount!
+  minOrder: TapTradeOfferAmount!
+  node: TapTradeOfferNode!
+  rate: TapTradeOfferAmount!
+}
+
+type TapTradeOfferAmount {
+  displayAmount: String!
+  fullAmount: String!
+}
+
+type TapTradeOfferAsset {
+  assetId: String
+  groupKey: String
+  id: String!
+  precision: Int!
+  symbol: String!
+}
+
+type TapTradeOfferFees {
+  baseFeeSats: Int!
+  feeRatePpm: Int!
+}
+
+type TapTradeOfferList {
+  list: [TapTradeOffer!]!
+  totalCount: Float!
+}
+
+type TapTradeOfferNode {
+  alias: String
+  pubkey: String
+  sockets: [String!]!
+}
+
+enum TapTransactionType {
+  PURCHASE
+  SALE
+}
+
+type TapTransfer {
+  anchor_tx_chain_fees: String!
+  anchor_tx_hash: String!
+  anchor_tx_height_hint: Int!
+  inputs: [TapTransferInput!]!
+  label: String!
+  outputs: [TapTransferOutput!]!
+  transfer_timestamp: String!
+}
+
+type TapTransferInput {
+  amount: String!
+  anchor_point: String!
+  asset_id: String!
+  precision: Int!
+}
+
+type TapTransferList {
+  transfers: [TapTransfer!]!
+}
+
+type TapTransferOutput {
+  amount: String!
+  asset_id: String!
+  output_type: String!
+  precision: Int!
+  script_key_is_local: Boolean!
+}
+
+type TapUniverseAsset {
+  asset_id: String
+  group_key: String
+  name: String
+  proof_type: String!
+  total_supply: String!
+}
+
+type TapUniverseAssetList {
+  assets: [TapUniverseAsset!]!
+}
+
+type TapUniverseInfo {
+  runtime_id: String!
+}
+
+type TapUniverseStats {
+  num_total_assets: Int!
+  num_total_groups: Int!
+  num_total_proofs: Int!
+  num_total_syncs: Int!
+}
+
+type TaprootAssetsMutations {
+  add_asset_invoice(input: TapAssetInvoiceInput!): TapAssetInvoiceResponse!
+  add_federation_server(host: String!): Boolean!
+  burn_asset(amount: String!, asset_id: String!): Boolean!
+  cancel_batch: Boolean!
+  finalize_batch: TapFinalizeBatchResponse!
+  fund_asset_channel(input: TapFundChannelInput!): TapFundChannelResponse!
+  mint_asset(input: TapMintAssetInput!): TapMintResponse!
+  new_address(amt: String, asset_id: String, group_key: String, proof_courier_addr: String): TapAddress!
+  remove_federation_server(host: String!): Boolean!
+  send_asset(tap_addrs: [String!]!): Boolean!
+  sync_universe(host: String!): TapSyncResult!
+}
+
+type TaprootAssetsQueries {
+  decode_address(addr: String!): TapAddress!
+  get_asset_channel_balances(peer_pubkey: String): [TapAssetChannelBalance!]!
+  get_assets: TapAssetList!
+  get_balances(group_by: TapBalanceGroupBy = GROUP_KEY): TapBalances!
+  get_federation_servers: TapFederationServerList!
+  get_info: TapDaemonInfo!
+  get_transfers: TapTransferList!
+  get_universe_assets: TapUniverseAssetList!
+  get_universe_info: TapUniverseInfo!
+  get_universe_stats: TapUniverseStats!
+  id: String!
+}
+
+type TeamMutations {
+  add_node(input: AddNodeInput!): AddNodeResult!
+  delete_node(slug: String!): DeleteNodeResult!
+  edit_node(input: EditNodeInput!): EditNodeResult!
+}
+
+type TradeInvoice {
+  asset_amount: String!
+  asset_id: String
+  asset_precision: Float
+  asset_symbol: String
+  confirmed_at: String
+  created_at: String!
+  direction: String!
+  group_key: String
+  id: String!
+  is_canceled: Boolean
+  is_confirmed: Boolean!
+  sats: String!
+}
+
+type TradeQueries {
+  trade_invoices(token: String): GetTradeInvoicesResult!
+}
+
+input TradeQuoteInput {
+  asset_amount: String!
+  asset_precision: Float
+  asset_symbol: String
+  expiry: Float
+  peer_pubkey: String!
+  tapd_asset_id: String
+  tapd_group_key: String
+  transaction_type: TapTransactionType!
+}
+
+type TradeQuoteResult {
+  asset_amount: String!
+  expiry_epoch: String
+  payment_request: String
+  rate_fixed: String
+  rfq_id: String
+  sats_amount: String!
+}
+
+type TradeReadinessResult {
+  alias: String
+  deposit_address: String
+  has_active_channel: Boolean!
+  has_channel: Boolean!
+  has_tapd: Boolean!
+  node_online: Boolean!
+  onchain_balance_sats: String!
+  pending_onchain_balance_sats: String!
+  public_key: String
+  recommended_node: RecommendedNode
+}
+
+type TwofaResult {
+  secret: String!
+  url: String!
+}
+
+input UpdateRoutingFeesParams {
+  base_fee_mtokens: String
+  base_fee_tokens: Float
+  cltv_delta: Float
+  fee_rate: Float
+  max_htlc_mtokens: String
+  min_htlc_mtokens: String
+  transaction_id: String
+  transaction_vout: Float
+}
+
+type UserBackupInfo {
+  last_update: String
+  last_update_size: String
+  total_size_saved: String!
+}
+
+type UserMutations {
+  offchain: OffchainMutations!
+}
+
+type UserNode {
+  id: String!
+  name: String!
+  network: String
+  slug: String!
+  type: String
+}
+
+type UserQueries {
+  get_nodes: [UserNode!]!
+  id: String!
+}
+
+type Utxo {
+  address: String!
+  address_format: String!
+  confirmation_count: Float!
+  output_script: String!
+  tokens: Float!
+  transaction_id: String!
+  transaction_vout: Float!
+}
+
+type Wallet {
+  build_tags: [String!]!
+  commit_hash: String!
+  is_autopilotrpc_enabled: Boolean!
+  is_chainrpc_enabled: Boolean!
+  is_invoicesrpc_enabled: Boolean!
+  is_signrpc_enabled: Boolean!
+  is_walletrpc_enabled: Boolean!
+  is_watchtowerrpc_enabled: Boolean!
+  is_wtclientrpc_enabled: Boolean!
+}
+
+type WithdrawRequest {
+  callback: String
+  defaultDescription: String
+  k1: String
+  maxWithdrawable: String
+  minWithdrawable: String
+  tag: String
+}

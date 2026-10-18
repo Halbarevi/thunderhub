@@ -1,0 +1,269 @@
+import crypto from 'crypto';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+type SSOConfig = {
+  serverUrl: string;
+  certPath: string;
+  macaroonPath: string;
+  dangerousNoSSOAuth: boolean;
+  nodeType: string;
+};
+
+type Throttler = {
+  ttl: number;
+  limit: number;
+};
+
+type Urls = {
+  mempool: string;
+  blockstream: string;
+  amboss: {
+    space: string;
+    auth: string;
+    magma: string;
+    trade: string;
+  };
+  ticker: string;
+  fees: string;
+  blockHeight: string;
+  boltz: string;
+  github: string;
+};
+
+type Headers = {
+  'apollographql-client-name': string;
+  'apollographql-client-version': string;
+};
+
+export type YamlEnvs = {
+  YML_ENV_1: string;
+  YML_ENV_2: string;
+  YML_ENV_3: string;
+  YML_ENV_4: string;
+};
+
+type SubscriptionsConfig = {
+  disableAll: boolean;
+  disableInvoices: boolean;
+  disablePayments: boolean;
+  disableForwards: boolean;
+  disableChannels: boolean;
+  disableBackups: boolean;
+};
+
+type AmbossConfig = {
+  disableHealthCheckPings: boolean;
+  disableBalancePushes: boolean;
+};
+
+export type ClientConfig = {
+  basePath: string;
+  apiUrl: string;
+  mempoolUrl: string;
+  defaultTheme: string;
+  defaultCurrency: string;
+  fetchPrices: boolean;
+  fetchFees: boolean;
+  disableLinks: boolean;
+  noVersionCheck: boolean;
+  logoutUrl: string;
+  disable2FA: boolean;
+  npmVersion: string;
+  dbEnabled: boolean;
+};
+
+type SqliteConfig = {
+  type: 'sqlite';
+  path?: string;
+};
+
+type PostgresConfig = {
+  type: 'postgres';
+  url?: string;
+};
+
+type DatabaseConfig =
+  | (SqliteConfig & { encryptionKey?: string })
+  | (PostgresConfig & { encryptionKey?: string })
+  | undefined;
+
+type ConfigType = {
+  basePath: string;
+  isProduction: boolean;
+  useHttps: boolean;
+  logJson: boolean;
+  playground: boolean;
+  logLevel: string;
+  jwtSecret: string;
+  cookiePath: string;
+  accountConfigPath: string;
+  torProxy: string;
+  sso: SSOConfig;
+  throttler: Throttler;
+  urls: Urls;
+  yamlEnvs: YamlEnvs;
+  masterPasswordOverride: string;
+  disable2FA: boolean;
+  headers: Headers;
+  subscriptions: SubscriptionsConfig;
+  amboss: AmbossConfig;
+  clientConfig: ClientConfig;
+  database?: DatabaseConfig;
+};
+
+const VALID_NODE_TYPES = ['lnd', 'litd'];
+
+const getValidNodeType = (value: string | undefined): string =>
+  value && VALID_NODE_TYPES.includes(value) ? value : 'lnd';
+
+const getPackageVersion = (): string => {
+  if (process.env.npm_package_version) {
+    return process.env.npm_package_version;
+  }
+
+  try {
+    const packageJson = JSON.parse(
+      readFileSync(join(process.cwd(), 'package.json'), 'utf8')
+    ) as { version?: string };
+
+    return packageJson.version || '0.0.0';
+  } catch {
+    return '0.0.0';
+  }
+};
+
+export default (): ConfigType => {
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  const jwtSecret = isProduction
+    ? crypto.randomBytes(64).toString('hex')
+    : '123456789';
+
+  console.log(
+    `Getting ${isProduction ? 'production' : 'development'} env variables.`
+  );
+
+  const mempool = process.env.MEMPOOL_URL || 'https://mempool.space';
+
+  const urls: Urls = {
+    mempool,
+    blockstream: 'https://blockstream.info',
+    amboss: {
+      // Auth, magma, and space URLs are all derived from the node's network
+      // at request time (mainnet → *.amboss.tech/space, mutinynet →
+      // *-dev.amboss.tech/space). Env vars below override the derivation and
+      // are primarily useful for pointing at local dev backends.
+      space: process.env.SPACE_API_URL || '',
+      auth: process.env.AMBOSS_AUTH_URL || '',
+      magma: process.env.MAGMA_API_URL || '',
+      trade: process.env.TRADE_API_URL || '',
+    },
+    fees: `${mempool}/api/v1/fees/recommended`,
+    blockHeight: `${mempool}/api/blocks/tip/height`,
+    ticker: 'https://blockchain.info/ticker',
+    github: 'https://api.github.com/repos/apotdevin/thunderhub/releases/latest',
+    boltz: 'https://api.boltz.exchange',
+  };
+
+  const npmVersion = getPackageVersion();
+
+  const headers = {
+    'apollographql-client-name': 'thunderhub',
+    'apollographql-client-version': npmVersion,
+  };
+
+  const sso = {
+    serverUrl: process.env.SSO_SERVER_URL || '',
+    certPath: process.env.SSO_CERT_PATH || '',
+    macaroonPath: process.env.SSO_MACAROON_PATH || '',
+    dangerousNoSSOAuth: process.env.DANGEROUS_NO_SSO_AUTH === 'true',
+    nodeType: getValidNodeType(process.env.SSO_NODE_TYPE),
+  };
+
+  const throttler = {
+    ttl: Number(process.env.THROTTLE_TTL) || 10,
+    limit: Number(process.env.THROTTLE_LIMIT) || 10,
+  };
+
+  const yamlEnvs = {
+    YML_ENV_1: process.env.YML_ENV_1 || '',
+    YML_ENV_2: process.env.YML_ENV_2 || '',
+    YML_ENV_3: process.env.YML_ENV_3 || '',
+    YML_ENV_4: process.env.YML_ENV_4 || '',
+  };
+
+  const subscriptions = {
+    disableAll: process.env.DISABLE_ALL_SUBS === 'true',
+    disableInvoices: process.env.DISABLE_INVOICE_SUB === 'true',
+    disablePayments: process.env.DISABLE_PAYMENT_SUB === 'true',
+    disableForwards: process.env.DISABLE_FORWARD_SUB === 'true',
+    disableChannels: process.env.DISABLE_CHANNEL_SUB === 'true',
+    disableBackups: process.env.DISABLE_BACKUP_SUB === 'true',
+  };
+
+  const amboss = {
+    disableHealthCheckPings: process.env.DISABLE_HEALTHCHECK_PINGS === 'true',
+    disableBalancePushes: process.env.DISABLE_BALANCE_PUSHES === 'true',
+  };
+
+  const basePath = process.env.BASE_PATH || '';
+
+  const clientConfig: ClientConfig = {
+    basePath,
+    apiUrl: `${basePath}/graphql`,
+    mempoolUrl: mempool,
+    defaultTheme: process.env.THEME || 'dark',
+    defaultCurrency: process.env.CURRENCY || 'sat',
+    fetchPrices: process.env.FETCH_PRICES !== 'false',
+    fetchFees: process.env.FETCH_FEES !== 'false',
+    disableLinks: process.env.DISABLE_LINKS === 'true',
+    noVersionCheck: process.env.NO_VERSION_CHECK === 'true',
+    logoutUrl: process.env.LOGOUT_URL || '',
+    disable2FA: process.env.DISABLE_TWOFA === 'true',
+    npmVersion,
+    dbEnabled: !!process.env.DB_TYPE,
+  };
+
+  const config: ConfigType = {
+    logJson: process.env.LOG_JSON === 'true',
+    masterPasswordOverride: process.env.MASTER_PASSWORD_OVERRIDE || '',
+    disable2FA: process.env.DISABLE_TWOFA === 'true',
+    basePath,
+    playground: !isProduction,
+    logLevel: process.env.LOG_LEVEL,
+    cookiePath: process.env.COOKIE_PATH || '',
+    accountConfigPath: process.env.ACCOUNT_CONFIG_PATH || '',
+    torProxy: process.env.TOR_PROXY_SERVER || '',
+    isProduction,
+    useHttps: process.env.USE_HTTPS === 'true',
+    headers,
+    throttler,
+    sso,
+    urls,
+    jwtSecret,
+    yamlEnvs,
+    subscriptions,
+    amboss,
+    clientConfig,
+    database: process.env.DB_TYPE
+      ? process.env.DB_TYPE === 'postgres'
+        ? {
+            type: 'postgres' as const,
+            url: process.env.DB_POSTGRES_URL,
+            encryptionKey: process.env.DB_ENCRYPTION_KEY,
+          }
+        : {
+            type: 'sqlite' as const,
+            path: process.env.DB_SQLITE_PATH,
+            encryptionKey: process.env.DB_ENCRYPTION_KEY,
+          }
+      : undefined,
+  };
+
+  if (!isProduction) {
+    console.log(config);
+  }
+
+  return config;
+};
